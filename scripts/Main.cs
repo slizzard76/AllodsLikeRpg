@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public partial class Main : Node3D
 {
-    private List<Unit> _selectedUnits = new();
+    public List<Unit> _selectedUnits = new();
     private bool _dragging = false;
     private Vector2 _dragStart;
     private Camera3D _camera;
@@ -130,10 +130,6 @@ public partial class Main : Node3D
         if (result.Count > 0)
         {
             var collider = result["collider"].As<Node>();
-            // ОТЛАДКА: смотрим, во что попал луч
-
-            GD.Print($"Луч попал в: {collider.Name} (Тип: {collider.GetType()})");
-
             if (collider is Unit unit) clickedUnit = unit;
             else if (collider is Enemy enemy) clickedEnemy = enemy;
             else if (collider is Npc npc) clickedNpc = npc;

@@ -2,10 +2,26 @@ using Godot;
 
 public partial class Unit : CharacterBody3D
 {
-    [Export] public float MoveSpeed { get; set; } = 4.0f;
+
+    // В самом начале класса Unit, рядом с другими Export-переменными:
+    [Export] public int Level { get; set; } = 1;
+    [Export] public int Experience { get; set; } = 0;
+    [Export] public int StatPoints { get; set; } = 0; // Свободные очки
+
+    [Export] public int Strength { get; set; } = 5;    // Влияет на урон
+    [Export] public int Agility { get; set; } = 5;     // Влияет на скорость
+    [Export] public int Intellect { get; set; } = 5;   // В будущем — на ману/способности
+
+    // Опыт, необходимый для следующего уровня (например, 100 * уровень)
+    public int ExpToNextLevel => Level * 100;
+
+
+    [Export] public float BaseMoveSpeed { get; set; } = 4.0f;
+    public float CurrentMoveSpeed => BaseMoveSpeed + (Agility * 0.1f);
     [Export] public float AttackRange { get; set; } = 1.5f;
     [Export] public float AttackDamage { get; set; } = 15.0f;
     [Export] public float AttackCooldown { get; set; } = 1.0f;
+    public float CurrentAttackCooldown => Mathf.Max(0.2f, AttackCooldown - (Agility * 0.02f));
 
     private Vector3 _targetPosition;
     private bool _moving = false;
@@ -45,8 +61,10 @@ public partial class Unit : CharacterBody3D
                 Velocity = Vector3.Zero;
                 if (_attackTimer <= 0f)
                 {
-                    _attackTimer = AttackCooldown;
-                    float finalDamage = AttackDamage;
+                    _attackTimer = CurrentAttackCooldown;
+
+                    // Базовый урон + бонус от Силы + бонус от оружия
+                    float finalDamage = AttackDamage + (Strength * 2);
 
                     if (Inventory.Instance != null && Inventory.Instance.EquippedWeapon != null)
                     {
@@ -54,9 +72,6 @@ public partial class Unit : CharacterBody3D
                     }
 
                     _targetEnemy.TakeDamage(finalDamage);
-
-                    // Небольшой визуальный рывок к врагу при ударе
-                    GlobalPosition += toEnemy.Normalized() * 0.2f;
                 }
             }
             else
@@ -107,7 +122,7 @@ public partial class Unit : CharacterBody3D
     {
         Vector3 dir = destination - GlobalPosition;
         dir.Y = 0;
-        Velocity = dir.Normalized() * MoveSpeed;
+        Velocity = dir.Normalized() * CurrentMoveSpeed;
     }
 
     public void SetMoveTarget(Vector3 pos)
@@ -138,5 +153,31 @@ public partial class Unit : CharacterBody3D
     public void TakeDamage(float amount)
     {
         _health?.TakeDamage(amount);
+    }
+
+    public void GainExperience(int amount)
+    {
+        int bonusXp = Mathf.RoundToInt(amount * (1.0f + Intellect * 0.05f));
+        Experience += bonusXp;
+        
+        GD.Print($"Получено {amount} опыта. Всего: {Experience}/{ExpToNextLevel}");
+
+        while (Experience >= ExpToNextLevel)
+        {
+            Experience -= ExpToNextLevel;
+            LevelUp();
+        }
+    }
+
+    private void LevelUp()
+    {
+        Level++;
+        StatPoints += 3; // Даем 3 очка за уровень
+        GD.Print($"НОВЫЙ УРОВЕНЬ: {Level}! Доступно очков: {StatPoints}");
+
+        // При повышении уровня восстанавливаем здоровье
+        var health = GetNode<Health>("Health");
+        health.MaxHealth += 10; // Увеличиваем максимальное здоровье
+        health.CurrentHealth = health.MaxHealth; // И лечим до полного
     }
 }

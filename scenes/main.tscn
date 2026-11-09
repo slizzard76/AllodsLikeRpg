@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://couiw2qh3hokw" path="res://scripts/QuestLogUI.cs" id="5_o6xl0"]
 [ext_resource type="Script" uid="uid://ndmgu68nj267" path="res://scripts/QuestManager.cs" id="5_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://d8c0b6cltjvd" path="res://scenes/npc.tscn" id="6_tefeu"]
+[ext_resource type="Script" uid="uid://ce4hcaqgeqlgs" path="res://scripts/CharacterUI.cs" id="6_tipki"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sgp6g"]
 albedo_color = Color(0, 0.49019608, 0, 1)
@@ -182,6 +183,74 @@ layout_mode = 2
 layout_mode = 2
 text = "Закрыть (I)"
 
+[node name="CharacterPanel" type="PanelContainer" parent="UI" unique_id=861422550]
+process_mode = 3
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -175.0
+offset_right = 200.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_tipki")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/CharacterPanel" unique_id=2019723815]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LevelLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=1325962302]
+layout_mode = 2
+text = "Уровень 1"
+
+[node name="XpLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=584458361]
+layout_mode = 2
+text = "Опыт: 0/100"
+
+[node name="HSeparator" type="HSeparator" parent="UI/CharacterPanel/VBoxContainer" unique_id=1746463064]
+layout_mode = 2
+
+[node name="PointsLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=1717277489]
+layout_mode = 2
+text = "Очки: 0
+"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=85288456]
+layout_mode = 2
+tooltip_text = "Сила: 5"
+
+[node name="Button" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer" unique_id=123124817]
+layout_mode = 2
+tooltip_text = "+"
+text = "Сила: 5 +"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=231017092]
+layout_mode = 2
+tooltip_text = "Ловкость: 5"
+
+[node name="Button2" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer2" unique_id=320981678]
+layout_mode = 2
+tooltip_text = "+"
+text = "Ловкость: 5 +"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=546441596]
+layout_mode = 2
+tooltip_text = "Интеллект: 5"
+
+[node name="Button3" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer3" unique_id=1001575026]
+layout_mode = 2
+tooltip_text = " +"
+text = "Интеллект: 5 +"
+
+[node name="Button4" type="Button" parent="UI/CharacterPanel/VBoxContainer" unique_id=777029399]
+layout_mode = 2
+text = "Закрыть (C)"
+
 [node name="QuestManager" type="Node" parent="." unique_id=298945519]
 script = ExtResource("5_tbgi4")
 
@@ -211,3 +280,6 @@ shape = SubResource("BoxShape3D_uugm6")
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="Walls" unique_id=1419805457]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10)
 shape = SubResource("BoxShape3D_sogix")
+
+[node name="Enemy4" parent="." unique_id=408776848 instance=ExtResource("2_jyhfs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.5, 0.143)

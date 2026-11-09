@@ -51,6 +51,15 @@ public partial class Health : Node
         {
             QuestManager.Instance.AddKillProgress("Очистка острова");
 
+
+            foreach (Node node in enemy.GetParent().GetChildren())
+            {
+                if (node is Unit unit)
+                {
+                    unit.GainExperience(25); // Даем 25 опыта за врага
+                }
+            }
+
             // Спавн лута
             if (enemy.LootScene != null)
             {
