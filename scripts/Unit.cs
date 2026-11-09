@@ -36,6 +36,7 @@ public partial class Unit : CharacterBody3D
         _targetPosition = GlobalPosition;
         _mesh = GetNode<MeshInstance3D>("MeshInstance3D");
         _health = GetNode<Health>("Health");
+        UpdateColor();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -179,5 +180,29 @@ public partial class Unit : CharacterBody3D
         var health = GetNode<Health>("Health");
         health.MaxHealth += 10; // Увеличиваем максимальное здоровье
         health.CurrentHealth = health.MaxHealth; // И лечим до полного
+    }
+
+
+    public void UpdateColor()
+    {
+        if (_mesh == null) return;
+
+        // Не меняем цвет, если юнит выделен (желтый)
+        if (_mesh.GetSurfaceOverrideMaterial(0) is StandardMaterial3D mat && mat.AlbedoColor == new Color(1f, 0.8f, 0.2f))
+            return;
+
+        Color color = new Color(0.6f, 0.6f, 0.9f); // Базовый (серо-синий)
+
+        if (Strength >= Agility && Strength >= Intellect) color = new Color(0.8f, 0.2f, 0.2f); // Воин (Красный)
+        else if (Agility >= Strength && Agility >= Intellect) color = new Color(0.2f, 0.8f, 0.2f); // Ловкач (Зеленый)
+        else if (Intellect >= Strength && Intellect >= Agility) color = new Color(0.2f, 0.2f, 0.9f); // Маг (Синий)
+
+        var material = _mesh.GetSurfaceOverrideMaterial(0) as StandardMaterial3D;
+        if (material == null)
+        {
+            material = new StandardMaterial3D();
+            _mesh.SetSurfaceOverrideMaterial(0, material);
+        }
+        material.AlbedoColor = color;
     }
 }

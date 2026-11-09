@@ -126,10 +126,17 @@ public partial class CharacterUI : PanelContainer
         }
 
         _currentUnit.StatPoints--;
-        if (stat == "Str") _currentUnit.Strength++;
+        if (stat == "Str")
+        {
+            _currentUnit.Strength++;
+            var h = _currentUnit.GetNode<Health>("Health");
+            h.MaxHealth += 5;
+            h.CurrentHealth += 5;
+        }
         else if (stat == "Agi") _currentUnit.Agility++;
         else if (stat == "Int") _currentUnit.Intellect++;
 
         UpdateUI();
+        _currentUnit.UpdateColor();
     }
 }
