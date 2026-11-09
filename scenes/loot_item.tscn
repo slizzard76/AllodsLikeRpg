@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b1472emmk33rn"]
+
+[ext_resource type="Script" uid="uid://cubbqnyfq8g0f" path="res://scripts/LootItem.cs" id="1_l7b46"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_052is"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_j2j2d"]
+radius = 1.0
+
+[node name="LootItem" type="StaticBody3D" unique_id=653522572]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9171889, -0.63926685, -0.10311365)
+script = ExtResource("1_l7b46")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=722877600]
+mesh = SubResource("SphereMesh_052is")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1081858314]
+shape = SubResource("SphereShape3D_j2j2d")
+
+[node name="Label3D" type="Label3D" parent="." unique_id=229943819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+billboard = 1
+text = "Золото (10)"

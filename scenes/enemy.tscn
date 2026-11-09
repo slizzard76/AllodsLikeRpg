@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dkmh5pljnqtv1"]
+
+[ext_resource type="Script" uid="uid://bpl8oa1x07n6f" path="res://scripts/Enemy.cs" id="1_7p1mj"]
+[ext_resource type="Script" uid="uid://cyk7eo35vf3lx" path="res://scripts/Health.cs" id="2_md0e3"]
+[ext_resource type="Script" uid="uid://cjdvg25pxsch5" path="res://scripts/HealthBar.cs" id="3_4ra3w"]
+[ext_resource type="PackedScene" uid="uid://b1472emmk33rn" path="res://scenes/loot_item.tscn" id="4_5uy6h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_052is"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j2j2d"]
+material = SubResource("StandardMaterial3D_052is")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uugm6"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_j2j2d"]
+radius = 6.0
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_j2j2d"]
+size = Vector2(100, 10)
+
+[node name="Enemy" type="CharacterBody3D" unique_id=1579285514]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9079841, -1.0259844, 0.14265013)
+script = ExtResource("1_7p1mj")
+LootScene = ExtResource("4_5uy6h")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=631922153]
+mesh = SubResource("BoxMesh_j2j2d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=924291791]
+shape = SubResource("BoxShape3D_uugm6")
+
+[node name="DetectArea" type="Area3D" parent="." unique_id=1808408626]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectArea" unique_id=882060510]
+shape = SubResource("SphereShape3D_j2j2d")
+
+[node name="Health" type="Node" parent="." unique_id=751058732]
+script = ExtResource("2_md0e3")
+MaxHealth = 50.0
+CurrentHealth = 50.0
+
+[node name="HealthBar" type="Sprite3D" parent="." unique_id=1182720664]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+modulate = Color(1, 0, 0, 1)
+billboard = 1
+texture = SubResource("PlaceholderTexture2D_j2j2d")
+script = ExtResource("3_4ra3w")
