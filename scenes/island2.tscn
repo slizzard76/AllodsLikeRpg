@@ -1,0 +1,283 @@
+[gd_scene format=3 uid="uid://cuh070jjqliom"]
+
+[ext_resource type="Script" uid="uid://bcmkk2bttosuk" path="res://scripts/Main.cs" id="1_d4ug5"]
+[ext_resource type="PackedScene" uid="uid://dkmh5pljnqtv1" path="res://scenes/enemy.tscn" id="2_viukf"]
+[ext_resource type="PackedScene" uid="uid://dvk6wnioboop2" path="res://scenes/unit.tscn" id="3_ugmft"]
+[ext_resource type="PackedScene" uid="uid://c0lyt3wnrssid" path="res://scenes/fireball.tscn" id="4_1tg5h"]
+[ext_resource type="Script" uid="uid://bvqmqds67b2mr" path="res://scripts/DialogueUI.cs" id="5_qrf8a"]
+[ext_resource type="Script" uid="uid://couiw2qh3hokw" path="res://scripts/QuestLogUI.cs" id="6_pj0ql"]
+[ext_resource type="Script" uid="uid://ce4hcaqgeqlgs" path="res://scripts/CharacterUI.cs" id="7_w4b1p"]
+[ext_resource type="Script" uid="uid://ndmgu68nj267" path="res://scripts/QuestManager.cs" id="8_y457l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sgp6g"]
+albedo_color = Color(0, 0.49019608, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sugp2"]
+bg_color = Color(0.3491902, 0.3491902, 0.3491902, 0.90000004)
+draw_center = false
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.90000004)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="LabelSettings" id="LabelSettings_j2j2d"]
+font_color = Color(1, 1, 0.11207495, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_sogix"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_052is"]
+font = SubResource("FontVariation_sogix")
+font_size = 20
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j2j2d"]
+size = Vector3(1, 4, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_052is"]
+size = Vector3(1, 4, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uugm6"]
+size = Vector3(20, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sogix"]
+size = Vector3(20, 4, 1)
+
+[node name="Main" type="Node3D" unique_id=1629860958]
+process_mode = 3
+script = ExtResource("1_d4ug5")
+
+[node name="Enemy" parent="." unique_id=1579285514 instance=ExtResource("2_viukf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9379277, 0.5, -2.999998)
+
+[node name="Unit" parent="." unique_id=1743564167 instance=ExtResource("3_ugmft")]
+transform = Transform3D(1, 0, 0, 0, 0.9960257, 0.08906716, 0, -0.08906716, 0.9960257, -7.471919, 0.5, -2.1735277)
+FireballScene = ExtResource("4_1tg5h")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1624823799]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+size = Vector3(20, 0.5, 20)
+material = SubResource("StandardMaterial3D_sgp6g")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1141827875]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=2103870605]
+transform = Transform3D(1, 0, 0, 0, 0.70833975, 0.7058715, 0, -0.7058715, 0.70833975, 0, 12, 12)
+projection = 1
+size = 15.0
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=620912159]
+process_mode = 3
+
+[node name="DialogueBox" type="PanelContainer" parent="UI" unique_id=725119654]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -94.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sugp2")
+script = ExtResource("5_qrf8a")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/DialogueBox" unique_id=602194882]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DialogueBox/MarginContainer" unique_id=944976568]
+layout_mode = 2
+
+[node name="NpcName" type="Label" parent="UI/DialogueBox/MarginContainer/VBoxContainer" unique_id=820296809]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_j2j2d")
+
+[node name="DialogueText" type="Label" parent="UI/DialogueBox/MarginContainer/VBoxContainer" unique_id=1003951208]
+process_mode = 3
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="OptionsContainer" type="HBoxContainer" parent="UI/DialogueBox/MarginContainer/VBoxContainer" unique_id=1094984911]
+layout_mode = 2
+
+[node name="QuestLogPanel" type="PanelContainer" parent="UI" unique_id=1645572812]
+process_mode = 3
+visible = false
+custom_minimum_size = Vector2(500, 400)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_pj0ql")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/QuestLogPanel" unique_id=1815285557]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/QuestLogPanel/MarginContainer" unique_id=1833713722]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/QuestLogPanel/MarginContainer/VBoxContainer" unique_id=412530594]
+layout_mode = 2
+text = "Журнал квестов"
+label_settings = SubResource("LabelSettings_052is")
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/QuestLogPanel/MarginContainer/VBoxContainer" unique_id=1452000734]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QuestsList" type="VBoxContainer" parent="UI/QuestLogPanel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1570675290]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="UI/QuestLogPanel/MarginContainer/VBoxContainer" unique_id=1144890389]
+layout_mode = 2
+text = "Закрыть (J)"
+
+[node name="InventoryPanel" type="PanelContainer" parent="UI" unique_id=1038713356]
+process_mode = 3
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/InventoryPanel" unique_id=282441464]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/InventoryPanel/VBoxContainer" unique_id=942829127]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Инвентарь"
+
+[node name="GoldLabel" type="Label" parent="UI/InventoryPanel/VBoxContainer" unique_id=1239729249]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/InventoryPanel/VBoxContainer" unique_id=1220218778]
+layout_mode = 2
+
+[node name="ItemsList" type="VBoxContainer" parent="UI/InventoryPanel/VBoxContainer/ScrollContainer" unique_id=1243572242]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="UI/InventoryPanel/VBoxContainer" unique_id=1691844139]
+layout_mode = 2
+text = "Закрыть (I)"
+
+[node name="CharacterPanel" type="PanelContainer" parent="UI" unique_id=861422550]
+process_mode = 3
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -175.0
+offset_right = 200.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7_w4b1p")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/CharacterPanel" unique_id=2019723815]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LevelLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=1325962302]
+layout_mode = 2
+text = "Уровень 1"
+
+[node name="XpLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=584458361]
+layout_mode = 2
+text = "Опыт: 0/100"
+
+[node name="HSeparator" type="HSeparator" parent="UI/CharacterPanel/VBoxContainer" unique_id=1746463064]
+layout_mode = 2
+
+[node name="PointsLabel" type="Label" parent="UI/CharacterPanel/VBoxContainer" unique_id=1717277489]
+layout_mode = 2
+text = "Очки: 0
+"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=85288456]
+layout_mode = 2
+tooltip_text = "Сила: 5"
+
+[node name="Button" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer" unique_id=123124817]
+layout_mode = 2
+tooltip_text = "+"
+text = "Сила: 5 +"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=231017092]
+layout_mode = 2
+tooltip_text = "Ловкость: 5"
+
+[node name="Button2" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer2" unique_id=320981678]
+layout_mode = 2
+tooltip_text = "+"
+text = "Ловкость: 5 +"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="UI/CharacterPanel/VBoxContainer" unique_id=546441596]
+layout_mode = 2
+tooltip_text = "Интеллект: 5"
+
+[node name="Button3" type="Button" parent="UI/CharacterPanel/VBoxContainer/HBoxContainer3" unique_id=1001575026]
+layout_mode = 2
+tooltip_text = " +"
+text = "Интеллект: 5 +"
+
+[node name="Button4" type="Button" parent="UI/CharacterPanel/VBoxContainer" unique_id=777029399]
+layout_mode = 2
+text = "Закрыть (C)"
+
+[node name="QuestManager" type="Node" parent="." unique_id=298945519]
+script = ExtResource("8_y457l")
+
+[node name="Enemy2" parent="." unique_id=1008055938 instance=ExtResource("2_viukf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.857, 0.5, 7.852)
+
+[node name="Enemy3" parent="." unique_id=1756087939 instance=ExtResource("2_viukf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3425636, 0.5, 7.819)
+
+[node name="Walls" type="StaticBody3D" parent="." unique_id=872862046]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls" unique_id=2078643463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1, 0)
+shape = SubResource("BoxShape3D_j2j2d")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Walls" unique_id=325328955]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
+shape = SubResource("BoxShape3D_052is")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Walls" unique_id=104834911]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
+shape = SubResource("BoxShape3D_uugm6")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="Walls" unique_id=1419805457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10)
+shape = SubResource("BoxShape3D_sogix")
+
+[node name="Enemy4" parent="." unique_id=408776848 instance=ExtResource("2_viukf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.5, 0.143)

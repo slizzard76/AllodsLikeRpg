@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://c0lyt3wnrssid"]
+
+[ext_resource type="Script" uid="uid://dmrw0rhrye1o5" path="res://scripts/Fireball.cs" id="1_3s14c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_052is"]
+albedo_color = Color(1, 0.29748532, 0.11207495, 1)
+emission_enabled = true
+emission = Color(0.9452769, 0.6591482, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_j2j2d"]
+material = SubResource("StandardMaterial3D_052is")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_j2j2d"]
+
+[node name="Fireball" type="Area3D" unique_id=1656072666]
+script = ExtResource("1_3s14c")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=313815934]
+mesh = SubResource("SphereMesh_j2j2d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1425966012]
+shape = SubResource("SphereShape3D_j2j2d")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=811154117]

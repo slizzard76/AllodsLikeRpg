@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public partial class Main : Node3D
 {
     public List<Unit> _selectedUnits = new();
+
     private bool _dragging = false;
     private Vector2 _dragStart;
     private Camera3D _camera;
@@ -29,6 +30,14 @@ public partial class Main : Node3D
             Visible = false
         };
         canvas.AddChild(_selectionBox);
+
+        if (FileAccess.FileExists("user://savegame.json"))
+        {
+            // Ждём один кадр, чтобы сцена успела инициализироваться
+            Callable.From(() => {
+                SaveManager.Instance.LoadGame(this);
+            }).CallDeferred();
+        }
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -65,6 +74,24 @@ public partial class Main : Node3D
                 Vector2 size = new Vector2(Mathf.Abs(mousePos.X - _dragStart.X), Mathf.Abs(mousePos.Y - _dragStart.Y));
                 _selectionBox.Position = pos;
                 _selectionBox.Size = size;
+            }
+        }
+
+
+        // Каст фаербола по клавише Q
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
+        {
+            if (keyEvent.Keycode == Key.Q)
+            {
+                foreach (var unit in _selectedUnits)
+                {
+                    // Если у юнита есть цель-враг (он атакует)
+                    if (unit.GetTargetEnemy() != null)
+                    {
+                        unit.CastFireball(unit.GetTargetEnemy());
+                    }
+                }
+                GetViewport().SetInputAsHandled();
             }
         }
     }
@@ -127,6 +154,8 @@ public partial class Main : Node3D
         Enemy clickedEnemy = null;
         Npc clickedNpc = null;
         LootItem clickedLoot = null;
+        Portal clickedPortal = null;
+
         if (result.Count > 0)
         {
             var collider = result["collider"].As<Node>();
@@ -135,54 +164,90 @@ public partial class Main : Node3D
             else if (collider is Npc npc) clickedNpc = npc;
             else if (collider is LootItem loot) clickedLoot = loot;
             else if (collider.GetParent() is LootItem parentLoot) clickedLoot = parentLoot;
+            else if (collider is Portal portal) clickedPortal = portal; // <--- ДОБАВЛЕНО
+            else if (collider.GetParent() is Portal parentPortal) clickedPortal = parentPortal;
         }
 
-        // Если кликнули по луту — подбираем его (если есть выделенный юнит рядом)
+        // --- 1. ЛОГИКА АТАКИ И ВЗАИМОДЕЙСТВИЯ ---
+        if (clickedEnemy != null && _selectedUnits.Count > 0)
+        {
+            foreach (var u in _selectedUnits) u.SetTargetEnemy(clickedEnemy);
+            return; // Не сбрасываем выделение!
+        }
+
+        if (clickedNpc != null)
+        {
+            var dialogueUI = GetNode<DialogueUI>("UI/DialogueBox");
+            clickedNpc.Interact(dialogueUI, QuestManager.Instance);
+            return;
+        }
+
         if (clickedLoot != null)
         {
             if (_selectedUnits.Count > 0)
             {
-                // Просто телепортируем юнита к луту для простоты (в идеале — заставить дойти)
                 var unit = _selectedUnits[0];
                 if (unit.GlobalPosition.DistanceTo(clickedLoot.GlobalPosition) < 3.0f)
-                {
                     clickedLoot.Collect();
+                else
+                {
+                    unit.SetMoveTarget(clickedLoot.GlobalPosition);
+                    GD.Print("Слишком далеко, сначала подойди.");
+                }
+            }
+            return; // Не сбрасываем выделение!
+        }
+
+        // --- 2. ЛОГИКА ВЫДЕЛЕНИЯ ---
+
+        // Если кликнули по юниту
+        if (clickedUnit != null)
+        {
+            // Если кликнули по уже выделенному юниту с зажатым Shift (опционально)
+            if (Input.IsKeyPressed(Key.Shift) && _selectedUnits.Contains(clickedUnit))
+            {
+                clickedUnit.SetSelected(false);
+                _selectedUnits.Remove(clickedUnit);
+                return;
+            }
+
+            // Иначе сбрасываем старых и выделяем нового
+            foreach (var u in _selectedUnits) u.SetSelected(false);
+            _selectedUnits.Clear();
+
+            clickedUnit.SetSelected(true);
+            _selectedUnits.Add(clickedUnit);
+            return;
+        }
+
+        if (clickedPortal != null)
+        {
+            if (_selectedUnits.Count > 0)
+            {
+                var unit = _selectedUnits[0];
+                if (unit.GlobalPosition.DistanceTo(clickedPortal.GlobalPosition) < 3.0f)
+                {
+                    clickedPortal.EnterPortal(this);
                 }
                 else
                 {
-                    // Если далеко — идём к нему
-                    unit.SetMoveTarget(clickedLoot.GlobalPosition);
-                    GD.Print("Слишком далеко, сначала подойди.");
+                    unit.SetMoveTarget(clickedPortal.GlobalPosition);
+                    GD.Print("Слишком далеко от портала, иди ближе.");
                 }
             }
             return;
         }
 
-        // Если кликнули по врагу — приказываем выделенным юнитам атаковать (ЛКМ)
-        if (clickedEnemy != null && _selectedUnits.Count > 0)
+        // --- 3. ЛОГИКА КЛИКА ПО ЗЕМЛЕ ---
+        if (clickedUnit == null && clickedEnemy == null && clickedNpc == null && clickedLoot == null)
         {
-            foreach (var u in _selectedUnits)
-                u.SetTargetEnemy(clickedEnemy);
-            return;
-        }
+            // Если луч попал в землю (или пустоту)
+            // ВАЖНО: мы НЕ очищаем _selectedUnits, чтобы герой не терял фокус!
 
-        // Если кликнули по NPC — открываем диалог
-        if (clickedNpc != null)
-        {
-            var dialogueUI = GetNode<DialogueUI>("UI/DialogueBox");
-            var qm = QuestManager.Instance;
-            clickedNpc.Interact(dialogueUI, qm);
-            return;
-        }
-
-        // Иначе — обычное выделение
-        foreach (var u in _selectedUnits) u.SetSelected(false);
-        _selectedUnits.Clear();
-
-        if (clickedUnit != null)
-        {
-            clickedUnit.SetSelected(true);
-            _selectedUnits.Add(clickedUnit);
+            // (Если вы хотите, чтобы клик по земле всё-таки снимал выделение, 
+            // раскомментируйте две строчки ниже)
+            // foreach (var u in _selectedUnits) u.SetSelected(false);
+            // _selectedUnits.Clear();
         }
     }
 
@@ -264,11 +329,12 @@ public partial class Main : Node3D
         {
             if (child is Unit) { anyUnitsAlive = true; break; }
         }
-
-        if (!anyUnitsAlive && _selectedUnits.Count > 0 && !SaveManager.IsLoading) 
+        // Показываем экран смерти, если юнитов нет, игра не на паузе и мы не грузимся
+        if (!anyUnitsAlive && _selectedUnits.Count > 0 && !SaveManager.IsLoading && !GetTree().Paused)
         {
-            GD.Print("GAME OVER");
-            GetTree().Paused = true;
+            var gameOverUI = GetNode<GameOverUI>("UI/GameOverPanel");
+            gameOverUI.ShowGameOver();
+            _selectedUnits.Clear(); // Очищаем, чтобы не спамило
         }
 
         // Камера следует за выделенным отрядом

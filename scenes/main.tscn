@@ -3,11 +3,14 @@
 [ext_resource type="Script" uid="uid://bcmkk2bttosuk" path="res://scripts/Main.cs" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://dkmh5pljnqtv1" path="res://scenes/enemy.tscn" id="2_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://dvk6wnioboop2" path="res://scenes/unit.tscn" id="2_sugp2"]
+[ext_resource type="PackedScene" uid="uid://c0lyt3wnrssid" path="res://scenes/fireball.tscn" id="4_85g3d"]
 [ext_resource type="Script" uid="uid://bvqmqds67b2mr" path="res://scripts/DialogueUI.cs" id="4_jyhfs"]
 [ext_resource type="Script" uid="uid://couiw2qh3hokw" path="res://scripts/QuestLogUI.cs" id="5_o6xl0"]
 [ext_resource type="Script" uid="uid://ndmgu68nj267" path="res://scripts/QuestManager.cs" id="5_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://d8c0b6cltjvd" path="res://scenes/npc.tscn" id="6_tefeu"]
 [ext_resource type="Script" uid="uid://ce4hcaqgeqlgs" path="res://scripts/CharacterUI.cs" id="6_tipki"]
+[ext_resource type="Script" uid="uid://t7jdw8jgq2yw" path="res://scripts/GameOverUI.cs" id="9_ya4ey"]
+[ext_resource type="PackedScene" uid="uid://dj44rhwh2riqr" path="res://scenes/portal.tscn" id="10_choun"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sgp6g"]
 albedo_color = Color(0, 0.49019608, 0, 1)
@@ -46,11 +49,15 @@ size = Vector3(20, 4, 1)
 process_mode = 3
 script = ExtResource("1_0wfyh")
 
+[node name="npc" parent="." unique_id=1633291721 instance=ExtResource("6_tefeu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1452723, 0, 0)
+
 [node name="Enemy" parent="." unique_id=1579285514 instance=ExtResource("2_jyhfs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9379277, 0.5, -2.999998)
 
 [node name="Unit" parent="." unique_id=1743564167 instance=ExtResource("2_sugp2")]
 transform = Transform3D(1, 0, 0, 0, 0.9960257, 0.08906716, 0, -0.08906716, 0.9960257, -7.471919, 0.5, -2.1735277)
+FireballScene = ExtResource("4_85g3d")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1624823799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
@@ -251,11 +258,38 @@ text = "Интеллект: 5 +"
 layout_mode = 2
 text = "Закрыть (C)"
 
+[node name="GameOverPanel" type="PanelContainer" parent="UI" unique_id=1611727888]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_ya4ey")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverPanel" unique_id=1339937327]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/GameOverPanel/VBoxContainer" unique_id=1372367513]
+layout_mode = 2
+text = "ВЫ ПОГИБЛИ"
+
+[node name="LoadButton" type="Button" parent="UI/GameOverPanel/VBoxContainer" unique_id=992900170]
+layout_mode = 2
+text = "Загрузить последнее сохранение"
+
+[node name="RestartButton" type="Button" parent="UI/GameOverPanel/VBoxContainer" unique_id=211186736]
+layout_mode = 2
+text = "Начать заново"
+
 [node name="QuestManager" type="Node" parent="." unique_id=298945519]
 script = ExtResource("5_tbgi4")
-
-[node name="npc" parent="." unique_id=1633291721 instance=ExtResource("6_tefeu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.693, 0.5, 0)
 
 [node name="Enemy2" parent="." unique_id=1008055938 instance=ExtResource("2_jyhfs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.857, 0.5, 7.852)
@@ -283,3 +317,6 @@ shape = SubResource("BoxShape3D_sogix")
 
 [node name="Enemy4" parent="." unique_id=408776848 instance=ExtResource("2_jyhfs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.5, 0.143)
+
+[node name="Portal" parent="." unique_id=1296808357 instance=ExtResource("10_choun")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2086132, 0, -5.5875072)

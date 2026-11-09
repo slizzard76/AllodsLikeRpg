@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://ti7rr1xi444w"]
+
+[ext_resource type="Script" uid="uid://b5alievbp5snj" path="res://scripts/MainMenu.cs" id="1_l6cm7"]
+
+[node name="MainMenu" type="Control" unique_id=196477675]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=410990824]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1746822638]
+layout_mode = 2
+text = "Аллоды: Ремастер"
+
+[node name="NewGameBtn" type="Button" parent="VBoxContainer" unique_id=949982919]
+layout_mode = 2
+text = "Новая игра"
+
+[node name="ContinueBtn" type="Button" parent="VBoxContainer" unique_id=1812970326]
+layout_mode = 2
+text = "Продолжить"
+
+[node name="QuitBtn" type="Button" parent="VBoxContainer" unique_id=1089131297]
+layout_mode = 2
+text = "Выход"

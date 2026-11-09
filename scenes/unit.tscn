@@ -2,14 +2,25 @@
 
 [ext_resource type="Script" uid="uid://ctq7vl3wajee8" path="res://scripts/Unit.cs" id="1_o7ajc"]
 [ext_resource type="Script" uid="uid://cyk7eo35vf3lx" path="res://scripts/Health.cs" id="2_k673f"]
-[ext_resource type="Script" uid="uid://cjdvg25pxsch5" path="res://scripts/HealthBar.cs" id="3_1jvru"]
+[ext_resource type="Script" uid="uid://dnxx4etwlxtoq" path="res://scripts/StatusBars.cs" id="3_1jvru"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_j2j2d"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j2j2d"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_j2j2d"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_052is"]
 size = Vector2(100, 10)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uugm6"]
+size = Vector2(100, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_052is"]
+albedo_color = Color(0.08627451, 1, 0.22745098, 0.38039216)
+
+[sub_resource type="TorusMesh" id="TorusMesh_j2j2d"]
+material = SubResource("StandardMaterial3D_052is")
+inner_radius = 0.4
+outer_radius = 0.6
 
 [node name="Unit" type="CharacterBody3D" unique_id=1743564167]
 script = ExtResource("1_o7ajc")
@@ -26,9 +37,22 @@ MaxHealth = 9999.0
 CurrentHealth = 9999.0
 RegenRate = 20.0
 
-[node name="HealthBar" type="Sprite3D" parent="." unique_id=1293664494]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-modulate = Color(0, 0.69803923, 0, 1)
-billboard = 1
-texture = SubResource("PlaceholderTexture2D_j2j2d")
+[node name="StatusBars" type="Node3D" parent="." unique_id=1990409807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 script = ExtResource("3_1jvru")
+
+[node name="HealthSprite" type="Sprite3D" parent="StatusBars" unique_id=1627710858]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+modulate = Color(0.99215686, 0.07058824, 0.03137255, 1)
+billboard = 1
+texture = SubResource("PlaceholderTexture2D_052is")
+
+[node name="ManaSprite" type="Sprite3D" parent="StatusBars" unique_id=583476916]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+modulate = Color(0, 0.019607844, 1, 1)
+billboard = 1
+texture = SubResource("PlaceholderTexture2D_uugm6")
+
+[node name="SelectionRing" type="MeshInstance3D" parent="." unique_id=2060159809]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+mesh = SubResource("TorusMesh_j2j2d")

@@ -136,7 +136,7 @@ public partial class SaveManager : Node
         string json = file.GetAsText();
         var data = JsonSerializer.Deserialize<GameData>(json);
         if (data == null) return;
-
+        var scenePath = GetTree().CurrentScene.SceneFilePath;
         // 3. Удаляем старые объекты
         var toRemove = new List<Node>();
         foreach (Node child in mainNode.GetChildren())

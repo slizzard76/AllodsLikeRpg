@@ -2,6 +2,14 @@ using Godot;
 
 public partial class Unit : CharacterBody3D
 {
+    [Export] public float MaxMana { get; set; } = 50.0f;
+    [Export] public float CurrentMana { get; set; } = 50.0f;
+    [Export] public float ManaRegen { get; set; } = 2.0f; // Восстановление в секунду
+    public Enemy GetTargetEnemy() => _targetEnemy;
+    [Export] public PackedScene FireballScene { get; set; }
+    [Export] public float ManaCost { get; set; } = 10.0f; // Пока без маны, просто для галочки
+    public float SpellCooldown = 2.0f;
+    private float _spellTimer = 0f;
 
     // В самом начале класса Unit, рядом с другими Export-переменными:
     [Export] public int Level { get; set; } = 1;
@@ -31,6 +39,8 @@ public partial class Unit : CharacterBody3D
     private Enemy _targetEnemy;
     private float _attackTimer = 0f;
 
+    private bool _isSelected;
+
     public override void _Ready()
     {
         _targetPosition = GlobalPosition;
@@ -42,6 +52,10 @@ public partial class Unit : CharacterBody3D
     public override void _PhysicsProcess(double delta)
     {
         _attackTimer -= (float)delta;
+        _spellTimer -= (float)delta;
+
+        if (CurrentMana < MaxMana)
+            CurrentMana = Mathf.Min(CurrentMana + ManaRegen * (float)delta, MaxMana);
 
         // Если цель-враг была уничтожена, сбрасываем её
         if (_targetEnemy != null && !IsInstanceValid(_targetEnemy))
@@ -141,14 +155,20 @@ public partial class Unit : CharacterBody3D
 
     public void SetSelected(bool value)
     {
-        if (_mesh == null) return;
-        var mat = _mesh.GetSurfaceOverrideMaterial(0) as StandardMaterial3D;
-        if (mat == null)
+        _isSelected = value;
+        var ring = GetNodeOrNull<MeshInstance3D>("SelectionRing");
+        if (ring != null)
+            ring.Visible = value;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (_isSelected)
         {
-            mat = new StandardMaterial3D();
-            _mesh.SetSurfaceOverrideMaterial(0, mat);
+            var ring = GetNodeOrNull<MeshInstance3D>("SelectionRing");
+            if (ring != null)
+                ring.RotateY((float)delta * 2.0f);
         }
-        mat.AlbedoColor = value ? new Color(1f, 0.8f, 0.2f) : new Color(0.6f, 0.6f, 0.9f);
     }
 
     public void TakeDamage(float amount)
@@ -205,4 +225,36 @@ public partial class Unit : CharacterBody3D
         }
         material.AlbedoColor = color;
     }
+
+    public void CastFireball(Enemy target)
+    {
+        if (FireballScene == null) return;
+        if (target == null || !IsInstanceValid(target)) return;
+        if (_spellTimer > 0) return;
+
+        if (CurrentMana < 15.0f) // Стоимость фаербола
+        {
+            GD.Print("Недостаточно маны!");
+            return;
+        }
+
+        _spellTimer = SpellCooldown;
+
+        CurrentMana -= 15.0f; // Тратим ману
+        // Создаем фаербол
+        var fireball = FireballScene.Instantiate<Fireball>();
+
+        // Наносим урон, зависящий от Интеллекта (например, Интеллект * 3 + базовый)
+        float damage = 10 + (Intellect * 3);
+
+        // Добавляем в мир и задаем позицию
+        GetParent().AddChild(fireball);
+        fireball.GlobalPosition = GlobalPosition + Vector3.Up * 1.0f;
+
+        // Настраиваем полет к цели
+        fireball.Setup(target.GlobalPosition, damage);
+
+        GD.Print($"Каст фаербола! Урон: {damage}");
+    }
+
 }
